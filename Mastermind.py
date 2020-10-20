@@ -3,6 +3,10 @@ import random
 from functools import reduce
 from itertools import *
 import copy
+import sys
+import numpy
+
+# numpy.set_printoptions(threshold=sys.maxsize)
 
 
 
@@ -79,7 +83,7 @@ def genConstraint( guess , feedback):
 		for i in guess:
 			for j in range(NUM_PEGS):
 				y.append(matrix[j][i-1])
-		cons.append(sum(y) >= sum(feedback))
+		cons.append(sum(y) >= sum(feedback))	
 
 
 		# cons = [(sum(list( items  for items in sublist for sublist in r))==feedback[0])]
@@ -88,12 +92,12 @@ def genConstraint( guess , feedback):
 	# if(len(cons)>1):
 	# 	cons = [And(cons)]
 
-	# print(cons.children())
+	# print(cons)
 
 	return cons
 
 
-def displayBoard(feddback , guess, turn , secret):
+def displayBoard(feedback , guess, turn , secret):
 
 	temp = ""
 	if sum(feedback) > 0:
@@ -115,10 +119,10 @@ def displayBoard(feddback , guess, turn , secret):
 
 
 
-if __name__ == "__main__":
+def play():
 
 	secret = [ random.randint(1, NUM_COLS) for peg in range(NUM_PEGS) ]
-	# secret = [ 1 , 1 ,3 , 4, 5]
+	# secret = [ 8 , 15 ,8 , 10 , 4]
 	# print("secret==",secret)
 	print("secret key:\t",secret)
 	print("-------------------------------------------")
@@ -148,9 +152,19 @@ if __name__ == "__main__":
 		# feedback = redWhiteCount(r,secret,guess)
 		
 	if solver.check() == unsat:
-		print("unsat: Cannot solve further")
+		print("\nunsat: Cannot solve further")
 	# redWhiteCount
 	# print(solver.check())
 	# print(solver.model())
 
 	# addConstraint()
+
+if __name__ == "__main__":
+	# game = 0
+
+	while(True):
+		# game+=1
+		# print("Game Number: ", game)
+		play()
+		if input("Play again? [Y/N]: ") not in ["y","Y"]:
+			break
