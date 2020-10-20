@@ -4,7 +4,12 @@ from functools import reduce
 from itertools import *
 import copy
 
-NUM_COLS = 16
+
+
+# set_option(max_args=10000000, max_lines=1000000, max_depth=10000000, max_visited=1000000)
+
+
+NUM_COLS = 15
 NUM_PEGS = 5
 NUM_TURNS = 16
 
@@ -65,17 +70,25 @@ def genConstraint( guess , feedback):
 	else:
 		x = []
 		for i in range(NUM_PEGS):
-			# for j in range(NUM_PEGS):
 			x.append(matrix[i][guess[i]-1])
+
+		
 		# print(x)
 		cons.append(sum(x) == feedback[0])
+		y = []
+		for i in guess:
+			for j in range(NUM_PEGS):
+				y.append(matrix[j][i-1])
+		cons.append(sum(y) >= sum(feedback))
+
+
 		# cons = [(sum(list( items  for items in sublist for sublist in r))==feedback[0])]
 		# cons = sum(cons) ==
 		# cons = [And( sum([ matrix[i][j] for i in range(NUM_PEGS)]) == 0) for j in guess]
 	# if(len(cons)>1):
 	# 	cons = [And(cons)]
 
-	# print(cons)
+	# print(cons.children())
 
 	return cons
 
@@ -105,6 +118,7 @@ def displayBoard(feddback , guess, turn , secret):
 if __name__ == "__main__":
 
 	secret = [ random.randint(1, NUM_COLS) for peg in range(NUM_PEGS) ]
+	# secret = [ 1 , 1 ,3 , 4, 5]
 	# print("secret==",secret)
 	print("secret key:\t",secret)
 	print("-------------------------------------------")
@@ -112,8 +126,9 @@ if __name__ == "__main__":
 	cells_c = basicConstraints()
 	solver.add(cells_c)
 	turn = 0
+
 	while solver.check() == sat:
-		turn+=1
+		turn += 1
 		m = solver.model()
 		r = [[m.evaluate(matrix[i][j]) for j in range(NUM_COLS)] for i in range (NUM_PEGS)]
 		# print(r)
@@ -122,6 +137,7 @@ if __name__ == "__main__":
 		feedback = redWhiteCount(r,secret,guess)
 		displayBoard(feedback , guess , turn, secret)
 		if feedback[0] == NUM_PEGS:
+			print("\nPlayer 2 won in ", turn," turns.")
 			break;
 		cons = genConstraint( guess , feedback )
 		solver.add(cons)
@@ -132,7 +148,7 @@ if __name__ == "__main__":
 		# feedback = redWhiteCount(r,secret,guess)
 		
 	if solver.check() == unsat:
-		print("lost")
+		print("unsat: Cannot solve further")
 	# redWhiteCount
 	# print(solver.check())
 	# print(solver.model())
