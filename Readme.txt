@@ -12,3 +12,10 @@ Game Rules:
 			NUM_COLS:	Number of colors (Default Value is 15)  
 			NUM_PEGS:	Number of pegs (Default Value is 5)  
 
+Error Analysis (Supporting File: Game.png):
+	Mastermind game is played without getting stuck at unsat condition of Z3 solver for approx 1950 times. This concludes that constraint being added to the Z3 solver as game proceeds is correct as of our knowledge.
+
+Team Members:
+	1. Ravikant Yadav
+	2. Nitesh Kumar
+	3. Nikhil Durgam
